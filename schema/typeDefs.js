@@ -1,4 +1,10 @@
 export const typeDefs = `#graphql
+
+
+
+
+
+
 type InstructionsAndRequirements {
     instructionsAndRequirementsId: Int!
     generalInstructions: String!

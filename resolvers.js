@@ -5,8 +5,8 @@ const fetchJobs = async () => {
     return result;
 }
 
-const fetchJobById = async (jobId) => {
-    const [result, metadata] = await sequelize.query(`SELECT * from job where jobId = ${jobId};`);
+const fetchJobById = async (job_id) => {
+    const [result, metadata] = await sequelize.query(`SELECT * from job where job_id = ${job_id};`);
     return result[0];
 }
 
@@ -20,13 +20,13 @@ const fetchThingsToRemember = async (thingsToRememberId) => {
     return result[0];
 }
 
-const fetchSlotsForJob = async (jobId) => {
-    const [result, metadata] = await sequelize.query(`SELECT * from slot where jobId = ${jobId};`);
+const fetchSlotsForJob = async (job_id) => {
+    const [result, metadata] = await sequelize.query(`SELECT * from slot where job_id = ${job_id};`);
     return result;
 }
 
-const fetchRolesForJob = async (jobId) => {
-    const [result, metadata] = await sequelize.query(`SELECT * from role where jobId = ${jobId};`);
+const fetchRolesForJob = async (job_id) => {
+    const [result, metadata] = await sequelize.query(`SELECT * from roles where job_id = ${job_id};`);
     return result;
 }
 
@@ -42,9 +42,9 @@ export const resolvers = {
           const jobs = await fetchJobs();
           return jobs;
         },
-        jobById: async (_, { jobId }, { dataSources }) => {
+        jobById: async (_, { job_id }, { dataSources }) => {
           // Implement logic to fetch a job by ID from the database
-          const job = await fetchJobById(jobId);
+          const job = await fetchJobById(job_id);
           return job;
         },
 
@@ -64,12 +64,12 @@ export const resolvers = {
         },
         slots: async (job, _, { dataSources }) => {
           // Implement logic to fetch slots for a job
-          const slots = await fetchSlotsForJob(job.jobId);
+          const slots = await fetchSlotsForJob(job.job_id);
           return slots;
         },
         roles: async (job, _, { dataSources }) => {
           // Implement logic to fetch roles for a job
-          const roles = await fetchRolesForJob(job.jobId);
+          const roles = await fetchRolesForJob(job.job_id);
           return roles;
         },
       },

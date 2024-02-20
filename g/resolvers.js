@@ -30,4 +30,15 @@ export const resolvers = {
             return data.books;
         }
     },
+
+    Mutation: {
+        addBook: (parent, args, context, info) => {
+            console.log(args);
+            const newBook = {...args, id: data.books.length + 1};
+            data.books.push(newBook)
+            return newBook;
+        }
+    }
+
+
 };

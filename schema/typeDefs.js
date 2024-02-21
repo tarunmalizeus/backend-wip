@@ -173,6 +173,7 @@ type InstructionsAndRequirements {
     jobs: [Job!]!
     jobById(job_id: Int!): Job
     users: [User]
+    qualifications: [Qualification]
   }
 
   type Mutation {

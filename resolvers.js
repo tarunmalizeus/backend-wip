@@ -1,5 +1,11 @@
 import {sequelize} from './database.js';
 
+
+const fetchQualifications = async () => {
+    const [result, metadata] = await sequelize.query(`SELECT * from qualification;`);
+    return result;
+}
+
 const fetchJobs = async () => {
     const [result, metadata] = await sequelize.query(`SELECT * from job;`);
     return result;
@@ -168,7 +174,11 @@ await sequelize.transaction(async (t) => {
         },
 
 
-
+        qualifications: async (_, __, { dataSources }) => {
+          // Implement logic to fetch qualifications from the database
+          const qualifications = await fetchQualifications();
+          return qualifications;
+        }
         
 
       },

@@ -30,7 +30,10 @@ const fetchRolesForJob = async (job_id) => {
     return result;
 }
 
-
+const fetchCity = async (location_id) => {
+    const [result, metadata] = await sequelize.query(`SELECT location_name from location_city where location_id = ${location_id};`);
+    return result[0];
+}
 
 
 export const resolvers = {
@@ -47,6 +50,8 @@ export const resolvers = {
           const job = await fetchJobById(job_id);
           return job;
         },
+
+
 
         
 
@@ -72,6 +77,13 @@ export const resolvers = {
           const roles = await fetchRolesForJob(job.job_id);
           return roles;
         },
+
+        location_city: async (job, _, { dataSources }) => {
+          // Implement logic to fetch location city for a job
+          const location_city = await fetchCity(job.location_id);
+          return location_city;
+        }
+
       },
 
 

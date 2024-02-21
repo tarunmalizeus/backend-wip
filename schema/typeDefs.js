@@ -1,6 +1,110 @@
 export const typeDefs = `#graphql
 
+type User {
+  user_id: Int
+  email: String
+  password: String
+  created: String
+  modified: String
+  userassets: UserAssets
+  edqualification: EdQualification
+  proqualification: ProQualification
+  userdetails: UserDetails
+}
 
+type UserAssets {
+  userassets_id: Int
+  resume: String
+  profile_photo: String
+  created: String
+  modified: String
+}
+
+type EdQualification {
+  edqualification_id: Int
+  percentage: Float
+  passing_year: Int
+  qualification: Qualification
+  stream_branch: StreamBranch
+  college: College
+  other_college_name: String
+  created: String
+  modified: String
+}
+
+type Qualification {
+  qualification_id: Int
+  qualification_name: String
+  created: String
+  modified: String
+}
+
+type StreamBranch {
+  stream_id: Int
+  stream_name: String
+  created: String
+  modified: String
+}
+
+type College {
+  college_id: Int
+  college_name: String
+  location: LocationCity
+  created: String
+  modified: String
+}
+
+type LocationCity {
+  location_id: Int
+  location_name: String
+  created: String
+  modified: String
+}
+
+type ProQualification {
+  proqualification_id: Int
+  applicationtype: ApplicationType
+  exp_year: Int
+  current_ctc: Float
+  expected_ctc: Float
+  currently_on_notice_period: Boolean
+  notice_end: String
+  notice_period_length: Int
+  appeared_zeus_test: Boolean
+  zeus_test_role: String
+  familiarTechs: [Tech]
+  expertTechs: [Tech]
+  created: String
+  modified: String
+}
+
+type ApplicationType {
+  applicationtype_id: Int
+  applicationtype_name: String
+  created: String
+  modified: String
+}
+
+type Tech {
+  tech_id: Int
+  tech_name: String
+  created: String
+  modified: String
+}
+
+type UserDetails {
+  userdetail_id: Int
+  first_name: String
+  last_name: String
+  phone_no: String
+  portfolio_url: String
+  referal_emp_name: String
+  send_me_update: Boolean
+  familiarTechs: String
+  expertTechs: String
+  created: String
+  modified: String
+}
 
 
 
@@ -35,7 +139,7 @@ type InstructionsAndRequirements {
     name: String!
     from_time: String!
     to_time: String!
-    location_id: Int!
+    location_city: LocationCity!
     internship: String!
     instructionsAndRequirements: InstructionsAndRequirements!
     thingsToRemember: ThingsToRemember!
@@ -64,5 +168,6 @@ type InstructionsAndRequirements {
   type Query {
     jobs: [Job!]!
     jobById(job_id: Int!): Job
+    users: [User]
   }
 `;

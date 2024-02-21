@@ -76,17 +76,16 @@ const userQuery = `
   VALUES ("${email}", "${password}")
 `;
 
-// Insert user asset data into the userassets table
-// const userAssetsQuery = `
-//   INSERT INTO userassets (resume, profile_photo)
-//   VALUES ("${resumeFile}", "${imageFile}")
-// `;
+const userAssetsQuery = `
+  INSERT INTO userassets (resume, profile_photo)
+  VALUES ("${resumeFile}", "${imageFile}")
+`;
 
-// // Insert user qualification data into the edqualification table
-// const edQualificationQuery = `
-//   INSERT INTO edqualification (percentage, passing_year, qualification_id, stream_id, college_id, other_college_name)
-//   VALUES (${percentage}, ${yearOfPassing}, (SELECT qualification_id FROM qualification WHERE qualification_name = "${qualification}"), (SELECT stream_id FROM stream_branch WHERE stream_name = "${stream}"), (SELECT college_id FROM college WHERE college_name = "${college}"), "${otherCollege}")
-// `;
+
+const edQualificationQuery = `
+  INSERT INTO edqualification (percentage, passing_year, qualification_id, stream_id, college_id, other_college_name)
+  VALUES (${percentage}, ${yearOfPassing}, (SELECT qualification_id FROM qualification WHERE qualification_name = "${qualification}"), (SELECT stream_id FROM stream_branch WHERE stream_name = "${stream}"), (SELECT college_id FROM college WHERE college_name = "${college}"), "${otherCollege}")
+`;
 
 // // Insert user professional qualification data into the proqualification table
 // const proQualificationQuery = `
@@ -100,20 +99,21 @@ const userQuery = `
 //   VALUES ("${firstName}", "${lastName}", "${phone}", "${portfolioUrl}", "${referralName}", ${jobUpdates === 'Yes' ? true : false}, "${familiarTech.join(', ')}", "${experiencedTech.join(', ')}", LAST_INSERT_ID(), LAST_INSERT_ID(), LAST_INSERT_ID(), LAST_INSERT_ID())
 // `;
 
-// Combine all the queries to execute in a transaction
-const queries = [userQuery];
-// const queries = [userQuery, userAssetsQuery];
+
+// const queries = [];
+// const queries = [userQuery ,userAssetsQuery];
 // const queries = [userQuery, userAssetsQuery, edQualificationQuery, proQualificationQuery, userDetailsQuery];
 
 // Execute the transaction
-await sequelize.transaction(async (t) => {
-  for (const query of queries) {
-    const [result,metadata]=await sequelize
-      .query(query, { transaction: t });
+let user_id,userassets_id,edqualification_id,proqualification_id, userDetails_id;
 
-    array.push(result);
-    // console.log(array);
-  }
+await sequelize.transaction(async (t) => {
+  // [user_id]=await sequelize.query(userQuery, { transaction: t });
+  // [userassets_id]=await sequelize.query(userAssetsQuery, { transaction: t });
+  [edqualification_id]=await sequelize.query(edQualificationQuery, { transaction: t });
+  // [proqualification_id]=await sequelize.query(proQualificationQuery, { transaction: t });
+  // [userDetails_id]=await sequelize.query(userDetailsQuery, { transaction: t });
+
 });
 
 

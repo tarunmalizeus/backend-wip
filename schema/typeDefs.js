@@ -18,8 +18,8 @@ type User {
 
 type UserAssets {
   userassets_id: Int
-  resume: String
-  profile_photo: String
+  resume: Upload
+  profile_photo: Upload
   created: String
   modified: String
 }

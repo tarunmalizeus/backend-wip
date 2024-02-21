@@ -1,5 +1,9 @@
 export const typeDefs = `#graphql
 
+
+scalar Upload
+
+
 type User {
   user_id: Int
   email: String
@@ -170,4 +174,48 @@ type InstructionsAndRequirements {
     jobById(job_id: Int!): Job
     users: [User]
   }
+
+  type Mutation {
+    createUser(input: CreateUserInput!): User
+  }
+  
+  input CreateUserInput {
+    firstName: String!
+    lastName: String!
+    email: String!
+    password: String!
+    phone: String!
+    portfolioUrl: String
+    imageFile: Upload
+    resumeFile: Upload
+    instructionalDesigner: Boolean
+    softwareEngineer: Boolean
+    softwareQualityEngineer: Boolean
+    jobUpdates: Boolean
+    referralName: String
+    percentage: Float
+    yearOfPassing: Int
+    qualification: String
+    stream: String
+    college: String
+    otherCollege: String
+    collegeLocation: String
+    applicantType: String
+    yearsOfExperience: Int
+    currentCTC: Float
+    expectedCTC: Float
+    experiencedTech: [String]
+    familiarTech: [String]
+    otherExperiencedTech: String
+    otherFamiliarTech: String
+    onNoticePeriod: String
+    noticePeriodEnd: String
+    noticePeriodLength: Int
+    appearedForTests: String
+    testNames: String
+  }
+  
+
+
+
 `;

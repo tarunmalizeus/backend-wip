@@ -36,7 +36,93 @@ const fetchCity = async (location_id) => {
 }
 
 
+
+function executeQuery(query, values) {
+  return new Promise((resolve, reject) => {
+    sequelize.query(query, values, (error, results, fields) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      resolve(results);
+    });
+  });
+}
+
 export const resolvers = {
+
+  Mutation:{
+    createUser: async (_, { input }) => {
+      try {
+        // Extract fields from input
+        let { firstName, lastName, email, password, phone, portfolioUrl, imageFile, resumeFile, 
+        instructionalDesigner, softwareEngineer, softwareQualityEngineer, 
+        jobUpdates, referralName, 
+        percentage, yearOfPassing, qualification, stream, college, otherCollege, collegeLocation, 
+        applicantType, yearsOfExperience, currentCTC, expectedCTC,
+        experiencedTech, familiarTech, otherExperiencedTech, otherFamiliarTech, 
+        onNoticePeriod, noticePeriodEnd, noticePeriodLength, appearedForTests, testNames } = input;
+
+        // console.log(email);
+
+        // Begin a transaction
+        // await executeQuery('START TRANSACTION');
+
+        // Insert user data into the users table
+        // console.log(email);
+
+        //CONVERT EMAIL AND PASSWORD TO STRING
+        // email = email.toString();
+        // password = password.toString();
+
+        // console.log(email);
+        // const [result1, metadata1] = await sequelize.query(`SELECT * from job;`);
+        //  console.log(result1); 
+
+         const [result, metadata] = await sequelize.query(`INSERT INTO users (email, password) VALUES ("${email}", "${password}") `);
+
+
+        // const [result, metadata] = await sequelize.query(`INSERT INTO users (email, password) VALUES ("j.com", "password123") `);
+        // const userInsertResult = await executeQuery('INSERT INTO users (email, password) VALUES (?, ?)', [email, password]);
+        // const userId = userInsertResult.insertId;
+        // console.log(userId);
+
+
+
+        // Insert other related data into respective tables
+        // Insert userassets
+        // await executeQuery('INSERT INTO userassets (resume, profile_photo) VALUES (?, ?)', [resumeFile, imageFile]);
+
+
+
+        // Insert other tables' data and handle relationships as needed
+
+        // Commit the transaction
+        // await executeQuery('COMMIT');
+
+        // Return the newly created user
+        return {
+          user_id: userId,
+          firstName,
+          lastName,
+          email,
+          password,
+          phone,
+          portfolioUrl,
+          // Include other fields as needed
+        };
+      }
+
+      catch (error) {
+        // Rollback the transaction if an error occurs
+        // await executeQuery('ROLLBACK');
+        // console.error('Error creating user:', error);
+        // throw new Error('Failed to create user');
+      }
+    }
+  },
+
+
 
     Query: {
         jobs: async (_, __, { dataSources }) => {

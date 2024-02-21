@@ -174,6 +174,8 @@ type InstructionsAndRequirements {
     jobById(job_id: Int!): Job
     users: [User]
     qualifications: [Qualification]
+    colleges: [College]
+    streams: [StreamBranch]
   }
 
   type Mutation {

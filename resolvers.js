@@ -1,6 +1,11 @@
 import {sequelize} from './database.js';
 
 
+const fetchColleges = async () => {
+    const [result, metadata] = await sequelize.query(`SELECT * from college;`);
+    return result;
+}
+
 const fetchQualifications = async () => {
     const [result, metadata] = await sequelize.query(`SELECT * from qualification;`);
     return result;
@@ -43,17 +48,17 @@ const fetchCity = async (location_id) => {
 
 
 
-function executeQuery(query, values) {
-  return new Promise((resolve, reject) => {
-    sequelize.query(query, values, (error, results, fields) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-      resolve(results);
-    });
-  });
-}
+// function executeQuery(query, values) {
+//   return new Promise((resolve, reject) => {
+//     sequelize.query(query, values, (error, results, fields) => {
+//       if (error) {
+//         reject(error);
+//         return;
+//       }
+//       resolve(results);
+//     });
+//   });
+// }
 
 export const resolvers = {
 
@@ -69,6 +74,8 @@ export const resolvers = {
         applicantType, yearsOfExperience, currentCTC, expectedCTC,
         experiencedTech, familiarTech, otherExperiencedTech, otherFamiliarTech, 
         onNoticePeriod, noticePeriodEnd, noticePeriodLength, appearedForTests, testNames } = input;
+
+          console.log(percentage, yearOfPassing, qualification, stream, college, otherCollege, collegeLocation,)
 
         // console.log(email);
 
@@ -117,6 +124,7 @@ await sequelize.transaction(async (t) => {
   // [user_id]=await sequelize.query(userQuery, { transaction: t });
   // [userassets_id]=await sequelize.query(userAssetsQuery, { transaction: t });
   [edqualification_id]=await sequelize.query(edQualificationQuery, { transaction: t });
+  console.log(edqualification_id);
   // [proqualification_id]=await sequelize.query(proQualificationQuery, { transaction: t });
   // [userDetails_id]=await sequelize.query(userDetailsQuery, { transaction: t });
 
@@ -178,8 +186,19 @@ await sequelize.transaction(async (t) => {
           // Implement logic to fetch qualifications from the database
           const qualifications = await fetchQualifications();
           return qualifications;
-        }
+        },
         
+        colleges: async (_, __, { dataSources }) => {
+          // Implement logic to fetch colleges from the database
+          const colleges = await fetchColleges();
+          return colleges;
+        },
+
+        streams: async (_, __, { dataSources }) => {
+          // Implement logic to fetch streams from the database
+          const [result, metadata] = await sequelize.query(`SELECT * from stream_branch;`);
+          return result;
+        }
 
       },
       Job: {

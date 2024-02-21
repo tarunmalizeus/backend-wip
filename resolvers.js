@@ -53,9 +53,10 @@ export const resolvers = {
 
   Mutation:{
     createUser: async (_, { input }) => {
+      const array = [];
       try {
         // Extract fields from input
-        let { firstName, lastName, email, password, phone, portfolioUrl, imageFile, resumeFile, 
+        const { firstName, lastName, email, password, phone, portfolioUrl, imageFile, resumeFile, 
         instructionalDesigner, softwareEngineer, softwareQualityEngineer, 
         jobUpdates, referralName, 
         percentage, yearOfPassing, qualification, stream, college, otherCollege, collegeLocation, 
@@ -68,41 +69,70 @@ export const resolvers = {
         // Begin a transaction
         // await executeQuery('START TRANSACTION');
 
-        // Insert user data into the users table
-        // console.log(email);
 
-        //CONVERT EMAIL AND PASSWORD TO STRING
-        // email = email.toString();
-        // password = password.toString();
+// Insert user data into the users table
+const userQuery = `
+  INSERT INTO users (email, password)
+  VALUES ("${email}", "${password}")
+`;
 
-        // console.log(email);
-        // const [result1, metadata1] = await sequelize.query(`SELECT * from job;`);
-        //  console.log(result1); 
+// Insert user asset data into the userassets table
+// const userAssetsQuery = `
+//   INSERT INTO userassets (resume, profile_photo)
+//   VALUES ("${resumeFile}", "${imageFile}")
+// `;
 
-         const [result, metadata] = await sequelize.query(`INSERT INTO users (email, password) VALUES ("${email}", "${password}") `);
+// // Insert user qualification data into the edqualification table
+// const edQualificationQuery = `
+//   INSERT INTO edqualification (percentage, passing_year, qualification_id, stream_id, college_id, other_college_name)
+//   VALUES (${percentage}, ${yearOfPassing}, (SELECT qualification_id FROM qualification WHERE qualification_name = "${qualification}"), (SELECT stream_id FROM stream_branch WHERE stream_name = "${stream}"), (SELECT college_id FROM college WHERE college_name = "${college}"), "${otherCollege}")
+// `;
+
+// // Insert user professional qualification data into the proqualification table
+// const proQualificationQuery = `
+//   INSERT INTO proqualification (applicationtype_id, exp_year, current_ctc, expected_ctc, currently_on_notice_period, notice_end, notice_period_length, appeared_zeus_test, zeus_test_role)
+//   VALUES ((SELECT applicationtype_id FROM applicationtype WHERE applicationtype_name = "${applicantType}"), ${yearsOfExperience}, ${currentCTC}, ${expectedCTC}, ${onNoticePeriod === 'Yes' ? true : false}, ${noticePeriodEnd ? `"${noticePeriodEnd}"` : null}, ${noticePeriodLength}, ${appearedForTests === 'Yes' ? true : false}, "${testNames}")
+// `;
+
+// // Insert user details into the userdetails table
+// const userDetailsQuery = `
+//   INSERT INTO userdetails (first_name, last_name, phone_no, portfolio_url, referal_emp_name, send_me_update, familiartechs_others, experttechs_others, user_id, userassets_id, edqualification_id, proqualification_id)
+//   VALUES ("${firstName}", "${lastName}", "${phone}", "${portfolioUrl}", "${referralName}", ${jobUpdates === 'Yes' ? true : false}, "${familiarTech.join(', ')}", "${experiencedTech.join(', ')}", LAST_INSERT_ID(), LAST_INSERT_ID(), LAST_INSERT_ID(), LAST_INSERT_ID())
+// `;
+
+// Combine all the queries to execute in a transaction
+const queries = [userQuery];
+// const queries = [userQuery, userAssetsQuery];
+// const queries = [userQuery, userAssetsQuery, edQualificationQuery, proQualificationQuery, userDetailsQuery];
+
+// Execute the transaction
+await sequelize.transaction(async (t) => {
+  for (const query of queries) {
+    const [result,metadata]=await sequelize
+      .query(query, { transaction: t });
+
+    array.push(result);
+    // console.log(array);
+  }
+});
 
 
-        // const [result, metadata] = await sequelize.query(`INSERT INTO users (email, password) VALUES ("j.com", "password123") `);
-        // const userInsertResult = await executeQuery('INSERT INTO users (email, password) VALUES (?, ?)', [email, password]);
-        // const userId = userInsertResult.insertId;
-        // console.log(userId);
 
+        //  const [user_id, metadata] = await sequelize.query(`INSERT INTO users (email, password) VALUES ("${email}", "${password}") `);
 
 
         // Insert other related data into respective tables
         // Insert userassets
-        // await executeQuery('INSERT INTO userassets (resume, profile_photo) VALUES (?, ?)', [resumeFile, imageFile]);
+        // await executeQuery('INSERT INTO userassets (resume, profile_photo) VALUES (?, ?)', [resumeFile, imageFile]); 
 
 
 
-        // Insert other tables' data and handle relationships as needed
 
         // Commit the transaction
         // await executeQuery('COMMIT');
 
-        // Return the newly created user
         return {
-          user_id: userId,
+          user_id: user_id,
           firstName,
           lastName,
           email,

@@ -32,12 +32,23 @@ const fetchThingsToRemember = async (thingsToRememberId) => {
 }
 
 const fetchSlotsForJob = async (job_id) => {
-    const [result, metadata] = await sequelize.query(`SELECT * from slot where job_id = ${job_id};`);
-    return result;
-}
+  const [result, metadata] = await sequelize.query(`
+      SELECT slots.slot_id, slots.from_time, slots.to_time, slots.created, slots.modified
+      FROM slots_in_job
+      JOIN slots ON slots_in_job.slot_id = slots.slot_id
+      WHERE slots_in_job.job_id = ${job_id};
+  `);
+  return result;
+};
+
 
 const fetchRolesForJob = async (job_id) => {
-    const [result, metadata] = await sequelize.query(`SELECT * from roles where job_id = ${job_id};`);
+    const [result, metadata] = await sequelize.query(`
+      SELECT role_desc.*, roles.role_name
+      FROM role_desc
+      JOIN roles ON role_desc.role_id = roles.role_id
+      WHERE role_desc.job_id = ${job_id};
+    `);
     return result;
 }
 
@@ -234,6 +245,8 @@ await sequelize.transaction(async (t) => {
         }
 
       },
+
+
 
 
 

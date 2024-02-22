@@ -58,6 +58,14 @@ type College {
   modified: String
 }
 
+type Venu{
+  venu_id: Int
+  venu_name: String
+  created: String
+  modified: String
+
+}
+
 type LocationCity {
   location_id: Int
   location_name: String
@@ -131,8 +139,8 @@ type InstructionsAndRequirements {
   }
 
   type Slot {
-    slotId: Int!
-    fromt_time: String!
+    slot_id: Int!
+    from_time: String!
     to_time: String!
     created: String!
     modified: String!
@@ -145,23 +153,19 @@ type InstructionsAndRequirements {
     to_time: String!
     location_city: LocationCity!
     internship: String!
+
     instructionsAndRequirements: InstructionsAndRequirements!
     thingsToRemember: ThingsToRemember!
     slots: [Slot!]!
     roles: [Role!]!
   }
 
-  type Role {
-    role_id: Int!
-    role_name: String!
-    created: String!
-    modified: String!
-  }
 
-  type RoleDesc {
+  type Role {
     job_id: Int!
+    role_name: String!
     role_id: Int!
-    packageRupees: Float!
+    package_rupees: Float!
     description: String!
     requirements: String!
     created: String!

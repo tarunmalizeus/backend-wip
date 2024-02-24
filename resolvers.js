@@ -77,7 +77,6 @@ export const resolvers = {
     createUser: async (_, { input }) => {
       const array = [];
       try {
-        // Extract fields from input
         const { firstName, lastName, email, password, phone, portfolioUrl, imageFile, resumeFile, 
           instructionalDesigner, softwareEngineer, softwareQualityEngineer, 
           jobUpdates, referralName, 
@@ -87,15 +86,10 @@ export const resolvers = {
           onNoticePeriod, noticePeriodEnd, noticePeriodLength, appearedForTests, testNames } = input;
           
           let user_id,userassets_id,edqualification_id,proqualification_id, userDetails_id;
-          
-
-        // console.log(email);
 
         // Begin a transaction
         // await executeQuery('START TRANSACTION');
 
-
-// Insert user data into the users table
 
 const preferredJobUser = `
         `;
@@ -116,7 +110,7 @@ const edQualificationQuery = `
   VALUES (${percentage}, ${yearOfPassing}, (SELECT qualification_id FROM qualification WHERE qualification_name = "${qualification}"), (SELECT stream_id FROM stream_branch WHERE stream_name = "${stream}"), (SELECT college_id FROM college WHERE college_name = "${college}"), "${otherCollege}")
 `;
 
-// Insert user professional qualification data into the proqualification table
+
 const proQualificationQuery = `
   INSERT INTO proqualification (applicationtype_id, exp_year, current_ctc, expected_ctc, currently_on_notice_period, notice_end, notice_period_length, appeared_zeus_test, zeus_test_role)
   VALUES ((SELECT applicationtype_id FROM applicationtype WHERE applicationtype_name = "${applicantType}"), ${yearsOfExperience}, ${currentCTC}, ${expectedCTC}, ${onNoticePeriod === 'Yes' ? true : false}, ${noticePeriodEnd ? `"${noticePeriodEnd}"` : null}, ${noticePeriodLength}, ${appearedForTests === 'Yes' ? true : false}, "${testNames}")
@@ -136,8 +130,8 @@ const proQualificationQuery = `
 // Execute the transaction
 
 await sequelize.transaction(async (t) => {
-  [user_id]=await sequelize.query(userQuery, { transaction: t });
-  await sequelize.query(preferredJobUser, { transaction: t });
+  // [user_id]=await sequelize.query(userQuery, { transaction: t });
+  // await sequelize.query(preferredJobUser, { transaction: t });
   // [userassets_id]=await sequelize.query(userAssetsQuery, { transaction: t });
   // [edqualification_id]=await sequelize.query(edQualificationQuery, { transaction: t });
   [proqualification_id]=await sequelize.query(proQualificationQuery, { transaction: t });

@@ -116,44 +116,29 @@ const proQualificationQuery = `
   VALUES ((SELECT applicationtype_id FROM applicationtype WHERE applicationtype_name = "${applicantType}"), ${yearsOfExperience}, ${currentCTC}, ${expectedCTC}, ${onNoticePeriod === 'Yes' ? true : false}, ${noticePeriodEnd ? `"${noticePeriodEnd}"` : null}, ${noticePeriodLength}, ${appearedForTests === 'Yes' ? true : false}, "${testNames}")
 `;
 
-// // Insert user details into the userdetails table
-// const userDetailsQuery = `
-//   INSERT INTO userdetails (first_name, last_name, phone_no, portfolio_url, referal_emp_name, send_me_update, familiartechs_others, experttechs_others, user_id, userassets_id, edqualification_id, proqualification_id)
-//   VALUES ("${firstName}", "${lastName}", "${phone}", "${portfolioUrl}", "${referralName}", ${jobUpdates === 'Yes' ? true : false}, "${familiarTech.join(', ')}", "${experiencedTech.join(', ')}", LAST_INSERT_ID(), LAST_INSERT_ID(), LAST_INSERT_ID(), LAST_INSERT_ID())
-// `;
+// Insert user details into the userdetails table
+const userDetailsQuery = `
+  INSERT INTO userdetails (first_name, last_name, phone_no, portfolio_url, referal_emp_name, send_me_update, familiartechs_others, experttechs_others, user_id, userassets_id, edqualification_id, proqualification_id)
+  VALUES ("${firstName}", "${lastName}", "${phone}", "${portfolioUrl}", "${referralName}", ${jobUpdates === 'Yes' ? true : false}, "${familiarTech.join(', ')}", "${experiencedTech.join(', ')}", LAST_INSERT_ID(), LAST_INSERT_ID(), LAST_INSERT_ID(), LAST_INSERT_ID())
+`;
 
 
-// const queries = [];
-// const queries = [userQuery ,userAssetsQuery];
-// const queries = [userQuery, userAssetsQuery, edQualificationQuery, proQualificationQuery, userDetailsQuery];
 
-// Execute the transaction
 
 await sequelize.transaction(async (t) => {
   // [user_id]=await sequelize.query(userQuery, { transaction: t });
   // await sequelize.query(preferredJobUser, { transaction: t });
   // [userassets_id]=await sequelize.query(userAssetsQuery, { transaction: t });
   // [edqualification_id]=await sequelize.query(edQualificationQuery, { transaction: t });
-  [proqualification_id]=await sequelize.query(proQualificationQuery, { transaction: t });
+  // [proqualification_id]=await sequelize.query(proQualificationQuery, { transaction: t });
+
+  
+
   // [userDetails_id]=await sequelize.query(userDetailsQuery, { transaction: t });
 
 });
-
-
-
-        //  const [user_id, metadata] = await sequelize.query(`INSERT INTO users (email, password) VALUES ("${email}", "${password}") `);
-
-
-        // Insert other related data into respective tables
-        // Insert userassets
-        // await executeQuery('INSERT INTO userassets (resume, profile_photo) VALUES (?, ?)', [resumeFile, imageFile]); 
-
-
-
-
         // Commit the transaction
         // await executeQuery('COMMIT');
-
         return {
           user_id: user_id,
           firstName,
@@ -162,7 +147,6 @@ await sequelize.transaction(async (t) => {
           password,
           phone,
           portfolioUrl,
-          // Include other fields as needed
         };
       }
 
@@ -174,8 +158,6 @@ await sequelize.transaction(async (t) => {
       }
     }
   },
-
-
 
     Query: {
         jobs: async (_, __, { dataSources }) => {

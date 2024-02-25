@@ -94,11 +94,6 @@ export const resolvers = {
           let user_id,userassets_id,edqualification_id,proqualification_id, userDetails_id;
 
 
-
-        // Begin a transaction
-        // await executeExperiencedTechQuery('START TRANSACTION');
-
-
 // const preferredJobUser = `
 //         `;
 
@@ -125,28 +120,19 @@ const proQualificationQuery = `
 `;
 
 
-// const experiencedTechsQuery = `
-
-// `;
-
-
-// const userDetailsQuery = `
-//   INSERT INTO userdetails (first_name, last_name, phone_no, portfolio_url, referal_emp_name, send_me_update, familiartechs_others, experttechs_others, user_id, userassets_id, edqualification_id, proqualification_id)
-//   VALUES ("${firstName}", "${lastName}", "${phone}", "${portfolioUrl}", "${referralName}", ${jobUpdates === 'Yes' ? true : false}, "${otherFamiliarTech}", "${otherExperiencedTech}", "${user_id}", "${userassets_id_id}", "${edqualification_id}", "${proqualification_id}" )
-// `;
+// const userDetailsQuery = ;
 
 
 await sequelize.transaction(async (t) => {
-  // console.log(experiencedTech);
 
-  // user_id=1;
 
   [user_id]=await sequelize.query(userQuery, { transaction: t });
-  // [userassets_id]=await sequelize.query(userAssetsQuery, { transaction: t });
-  // [edqualification_id]=await sequelize.query(edQualificationQuery, { transaction: t });
-  // [proqualification_id]=await sequelize.query(proQualificationQuery, { transaction: t });
+  [userassets_id]=await sequelize.query(userAssetsQuery, { transaction: t });
+  [edqualification_id]=await sequelize.query(edQualificationQuery, { transaction: t });
+  [proqualification_id]=await sequelize.query(proQualificationQuery, { transaction: t });
 
-    
+  console.log(user_id, userassets_id, edqualification_id, proqualification_id);
+
   for(const tech of experiencedTech){
     const [result, metadata] = await sequelize.query(`SELECT tech_id from techs where tech_name = "${tech}"`);
     await sequelize.query(
@@ -155,13 +141,25 @@ await sequelize.transaction(async (t) => {
       , { transaction: t });
   }
 
-    // await sequelize.query(preferredJobUser, { transaction: t });
+  for(const tech of familiarTech){
+    const [result, metadata] = await sequelize.query(`SELECT tech_id from techs where tech_name = "${tech}"`);
+    await sequelize.query(
+      `INSERT INTO familiar_tech (user_id, tech_id)
+      VALUES ("${user_id}", ${result[0].tech_id})`
+      , { transaction: t });
+  }
 
-  // [userDetails_id]=await sequelize.query(userDetailsQuery, { transaction: t });
+  await sequelize.query(
+    `
+    INSERT INTO userdetails (first_name, last_name, phone_no, portfolio_url, referal_emp_name, send_me_update, familiartechs_others, experttechs_others, user_id, userassets_id, edqualification_id, proqualification_id)
+    VALUES ("${firstName}", "${lastName}", "${phone}", "${portfolioUrl}", "${referralName}", ${jobUpdates === 'Yes' ? true : false}, "${otherFamiliarTech}", "${otherExperiencedTech}", "${user_id}", "${userassets_id}", "${edqualification_id}", "${proqualification_id}" )
+  `
+  
+    
+    , { transaction: t });
 
 });
-        // Commit the transaction
-        // await executeExperiencedTechQuery('COMMIT');
+
         return {
           user_id: user_id,
           firstName,

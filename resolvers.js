@@ -116,13 +116,13 @@ const proQualificationQuery = `
   VALUES ((SELECT applicationtype_id FROM applicationtype WHERE applicationtype_name = "${applicantType}"), ${yearsOfExperience}, ${currentCTC}, ${expectedCTC}, ${onNoticePeriod === 'Yes' ? true : false}, ${noticePeriodEnd ? `"${noticePeriodEnd}"` : null}, ${noticePeriodLength}, ${appearedForTests === 'Yes' ? true : false}, "${testNames}")
 `;
 
-// Insert user details into the userdetails table
+
+
+
 const userDetailsQuery = `
   INSERT INTO userdetails (first_name, last_name, phone_no, portfolio_url, referal_emp_name, send_me_update, familiartechs_others, experttechs_others, user_id, userassets_id, edqualification_id, proqualification_id)
-  VALUES ("${firstName}", "${lastName}", "${phone}", "${portfolioUrl}", "${referralName}", ${jobUpdates === 'Yes' ? true : false}, "${familiarTech.join(', ')}", "${experiencedTech.join(', ')}", LAST_INSERT_ID(), LAST_INSERT_ID(), LAST_INSERT_ID(), LAST_INSERT_ID())
+  VALUES ("${firstName}", "${lastName}", "${phone}", "${portfolioUrl}", "${referralName}", ${jobUpdates === 'Yes' ? true : false}, "${otherFamiliarTech}", "${otherExperiencedTech}", "${user_id}", "${userassets_id_id}", "${edqualification_id}", "${proqualification_id}" )
 `;
-
-
 
 
 await sequelize.transaction(async (t) => {
@@ -132,7 +132,7 @@ await sequelize.transaction(async (t) => {
   // [edqualification_id]=await sequelize.query(edQualificationQuery, { transaction: t });
   // [proqualification_id]=await sequelize.query(proQualificationQuery, { transaction: t });
 
-  
+
 
   // [userDetails_id]=await sequelize.query(userDetailsQuery, { transaction: t });
 

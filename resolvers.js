@@ -57,9 +57,15 @@ const fetchCity = async (location_id) => {
     return result[0];
 }
 
+async function executeExperiencedTechQuery(user_id, arg){
+      await sequelize.query(
+        `INSERT INTO experienced_tech (user_id, tech_id)
+        VALUES ("${user_id}", (SELECT tech_id FROM tech WHERE tech_name = "${experiencedTech[i]}"))`
+        , { transaction: t });
+}
 
 
-// function executeQuery(query, values) {
+// function executeExperiencedTechQuery(query, values) {
 //   return new Promise((resolve, reject) => {
 //     sequelize.query(query, values, (error, results, fields) => {
 //       if (error) {
@@ -87,12 +93,14 @@ export const resolvers = {
           
           let user_id,userassets_id,edqualification_id,proqualification_id, userDetails_id;
 
+
+
         // Begin a transaction
-        // await executeQuery('START TRANSACTION');
+        // await executeExperiencedTechQuery('START TRANSACTION');
 
 
-const preferredJobUser = `
-        `;
+// const preferredJobUser = `
+//         `;
 
 const userQuery = `
   INSERT INTO users (email, password)
@@ -117,28 +125,43 @@ const proQualificationQuery = `
 `;
 
 
+// const experiencedTechsQuery = `
+
+// `;
 
 
-const userDetailsQuery = `
-  INSERT INTO userdetails (first_name, last_name, phone_no, portfolio_url, referal_emp_name, send_me_update, familiartechs_others, experttechs_others, user_id, userassets_id, edqualification_id, proqualification_id)
-  VALUES ("${firstName}", "${lastName}", "${phone}", "${portfolioUrl}", "${referralName}", ${jobUpdates === 'Yes' ? true : false}, "${otherFamiliarTech}", "${otherExperiencedTech}", "${user_id}", "${userassets_id_id}", "${edqualification_id}", "${proqualification_id}" )
-`;
+// const userDetailsQuery = `
+//   INSERT INTO userdetails (first_name, last_name, phone_no, portfolio_url, referal_emp_name, send_me_update, familiartechs_others, experttechs_others, user_id, userassets_id, edqualification_id, proqualification_id)
+//   VALUES ("${firstName}", "${lastName}", "${phone}", "${portfolioUrl}", "${referralName}", ${jobUpdates === 'Yes' ? true : false}, "${otherFamiliarTech}", "${otherExperiencedTech}", "${user_id}", "${userassets_id_id}", "${edqualification_id}", "${proqualification_id}" )
+// `;
 
 
 await sequelize.transaction(async (t) => {
-  // [user_id]=await sequelize.query(userQuery, { transaction: t });
-  // await sequelize.query(preferredJobUser, { transaction: t });
+  // console.log(experiencedTech);
+
+  // user_id=1;
+
+  [user_id]=await sequelize.query(userQuery, { transaction: t });
   // [userassets_id]=await sequelize.query(userAssetsQuery, { transaction: t });
   // [edqualification_id]=await sequelize.query(edQualificationQuery, { transaction: t });
   // [proqualification_id]=await sequelize.query(proQualificationQuery, { transaction: t });
 
+    
+  for(const tech of experiencedTech){
+    const [result, metadata] = await sequelize.query(`SELECT tech_id from techs where tech_name = "${tech}"`);
+    await sequelize.query(
+      `INSERT INTO experienced_tech (user_id, tech_id)
+      VALUES ("${user_id}", ${result[0].tech_id})`
+      , { transaction: t });
+  }
 
+    // await sequelize.query(preferredJobUser, { transaction: t });
 
   // [userDetails_id]=await sequelize.query(userDetailsQuery, { transaction: t });
 
 });
         // Commit the transaction
-        // await executeQuery('COMMIT');
+        // await executeExperiencedTechQuery('COMMIT');
         return {
           user_id: user_id,
           firstName,
@@ -152,7 +175,7 @@ await sequelize.transaction(async (t) => {
 
       catch (error) {
         // Rollback the transaction if an error occurs
-        // await executeQuery('ROLLBACK');
+        // await executeExperiencedTechQuery('ROLLBACK');
         // console.error('Error creating user:', error);
         // throw new Error('Failed to create user');
       }

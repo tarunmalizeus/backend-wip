@@ -4,16 +4,16 @@ export const typeDefs = `#graphql
 scalar Upload
 
 type UserLogin {
-  _id: ID!
+  user_id: Int!
   email: String!
   password: String!
 }
 
 
 type AuthData {
-  userId: ID!
-  token: String!
-  tokenExpiration: Int!
+  user_id: Int!
+  token: String
+  tokenExpiration: Int
 }
 
 

@@ -71,6 +71,20 @@ async function executeExperiencedTechQuery(user_id, arg){
 export const resolvers = {
 
   Mutation:{
+
+
+    login: async (_, { email, password }) => {
+      const [result, metadata] = await sequelize.query(`SELECT * from users where email = "${email}" and password = "${password}";`);
+      if(result.length === 0){
+        return null;
+      }
+      return result[0];
+    },
+
+
+
+
+
     createUser: async (_, { input }) => {
       const array = [];
       try {
@@ -157,14 +171,6 @@ await sequelize.transaction(async (t) => {
   },
 
     Query: {
-
-        login: async (_, { email, password }) => {
-          const [result, metadata] = await sequelize.query(`SELECT * from users where email = "${email}" and password = "${password}";`);
-          if(result.length === 0){
-            return null;
-          }
-          return result[0];
-        },
 
 
         jobs: async (_, __, { dataSources }) => {

@@ -169,6 +169,7 @@ type InstructionsAndRequirements {
 
     instructionsAndRequirements: InstructionsAndRequirements!
     thingsToRemember: ThingsToRemember!
+    
     slots: [Slot!]!
     roles: [Role!]!
   }
@@ -193,11 +194,11 @@ type InstructionsAndRequirements {
     qualifications: [Qualification]
     colleges: [College]
     streams: [StreamBranch]
-    login(email: String!, password: String!): AuthData!
   }
-
+  
   type Mutation {
     createUser(input: CreateUserInput!): User
+    login(email: String!, password: String!): AuthData!
   }
   
   input CreateUserInput {

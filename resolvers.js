@@ -24,15 +24,7 @@ const fetchJobById = async (job_id) => {
     return result[0];
 }
 
-// const fetchInstructionsAndRequirements = async (instructionsAndRequirementsId) => {
-//     const [result, metadata] = await sequelize.query(`SELECT * from instructions_and_requirements where instructions_and_requirements_id = ${instructions_and_requirements_id};`);
-//     return result[0];
-// }
 
-const fetchThingsToRemember = async (thingsToRememberId) => {
-    const [result, metadata] = await sequelize.query(`SELECT * from thingsToRemember where thingsToRememberId = ${thingsToRememberId};`);
-    return result[0];
-}
 
 const fetchSlotsForJob = async (job_id) => {
   const [result, metadata] = await sequelize.query(`
@@ -203,12 +195,10 @@ await sequelize.transaction(async (t) => {
         instructionsAndRequirements: async (job, _, { dataSources }) => {
           const [result, metadata] = await sequelize.query(`SELECT * from instructions_and_requirements where instructions_and_requirements_id = ${job.instructions_and_requirements_id};`);
           return result[0];
-          // const instructionsAndRequirements = await fetchInstructionsAndRequirements(job.instructions_annd_requirements_id);
-          // return instructionsAndRequirements;
         },
         thingsToRemember: async (job, _, { dataSources }) => {
-          const thingsToRemember = await fetchThingsToRemember(job.thingsToRememberId);
-          return thingsToRemember;
+          const [result, metadata] = await sequelize.query(`SELECT * from things_to_remember where things_to_remember_id = ${job.things_to_remember_id};`);
+          return result[0];
         },
         slots: async (job, _, { dataSources }) => {
           const slots = await fetchSlotsForJob(job.job_id);

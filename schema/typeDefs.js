@@ -146,10 +146,10 @@ type InstructionsAndRequirements {
   }
 
   type ThingsToRemember {
-    thingsToRememberId: Int!
-    thingsToRemember: String!
+    things_to_remember_id: Int!
+    things_to_remember: String!
     created: String!
-    modified: String!
+    modified: String!    
   }
 
   type Slot {

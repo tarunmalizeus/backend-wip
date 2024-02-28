@@ -195,6 +195,7 @@ type InstructionsAndRequirements {
     qualifications: [Qualification]
     colleges: [College]
     streams: [StreamBranch]
+    roleUnique(job_id: Int!, role_id:Int!): Role
   }
   
   type Mutation {

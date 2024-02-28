@@ -164,6 +164,10 @@ await sequelize.transaction(async (t) => {
 
     Query: {
 
+        roleUnique : async (_, {job_id, role_id}, { dataSources }) => {
+          const [result, metadata] = await sequelize.query(`SELECT * from role_desc where role_id=${role_id} and job_id=${job_id} ;`);
+          return result[0];
+        },
 
         jobs: async (_, __, { dataSources }) => {
           const jobs = await fetchJobs();

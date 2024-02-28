@@ -1,5 +1,8 @@
 import {sequelize} from './database.js';
 
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+
 
 const fetchColleges = async () => {
     const [result, metadata] = await sequelize.query(`SELECT * from college;`);
@@ -65,18 +68,6 @@ async function executeExperiencedTechQuery(user_id, arg){
 }
 
 
-// function executeExperiencedTechQuery(query, values) {
-//   return new Promise((resolve, reject) => {
-//     sequelize.query(query, values, (error, results, fields) => {
-//       if (error) {
-//         reject(error);
-//         return;
-//       }
-//       resolve(results);
-//     });
-//   });
-// }
-
 export const resolvers = {
 
   Mutation:{
@@ -91,11 +82,8 @@ export const resolvers = {
           experiencedTech, familiarTech, otherExperiencedTech, otherFamiliarTech, 
           onNoticePeriod, noticePeriodEnd, noticePeriodLength, appearedForTests, testNames } = input;
           
-          let user_id,userassets_id,edqualification_id,proqualification_id, userDetails_id;
+          let user_id,userassets_id,edqualification_id,proqualification_id;
 
-
-// const preferredJobUser = `
-//         `;
 
 const userQuery = `
   INSERT INTO users (email, password)
@@ -120,18 +108,13 @@ const proQualificationQuery = `
 `;
 
 
-// const userDetailsQuery = ;
-
-
 await sequelize.transaction(async (t) => {
-
 
   [user_id]=await sequelize.query(userQuery, { transaction: t });
   [userassets_id]=await sequelize.query(userAssetsQuery, { transaction: t });
   [edqualification_id]=await sequelize.query(edQualificationQuery, { transaction: t });
   [proqualification_id]=await sequelize.query(proQualificationQuery, { transaction: t });
 
-  console.log(user_id, userassets_id, edqualification_id, proqualification_id);
 
   for(const tech of experiencedTech){
     const [result, metadata] = await sequelize.query(`SELECT tech_id from techs where tech_name = "${tech}"`);
@@ -150,16 +133,13 @@ await sequelize.transaction(async (t) => {
   }
 
   await sequelize.query(
-    `
+   `
     INSERT INTO userdetails (first_name, last_name, phone_no, portfolio_url, referal_emp_name, send_me_update, familiartechs_others, experttechs_others, user_id, userassets_id, edqualification_id, proqualification_id)
     VALUES ("${firstName}", "${lastName}", "${phone}", "${portfolioUrl}", "${referralName}", ${jobUpdates === 'Yes' ? true : false}, "${otherFamiliarTech}", "${otherExperiencedTech}", "${user_id}", "${userassets_id}", "${edqualification_id}", "${proqualification_id}" )
   `
-  
-    
     , { transaction: t });
 
 });
-
         return {
           user_id: user_id,
           firstName,
@@ -172,42 +152,32 @@ await sequelize.transaction(async (t) => {
       }
 
       catch (error) {
-        // Rollback the transaction if an error occurs
-        // await executeExperiencedTechQuery('ROLLBACK');
-        // console.error('Error creating user:', error);
-        // throw new Error('Failed to create user');
       }
     }
   },
 
     Query: {
         jobs: async (_, __, { dataSources }) => {
-        
-          // Implement logic to fetch jobs from the database
           const jobs = await fetchJobs();
           return jobs;
         },
         jobById: async (_, { job_id }, { dataSources }) => {
-          // Implement logic to fetch a job by ID from the database
           const job = await fetchJobById(job_id);
           return job;
         },
 
 
         qualifications: async (_, __, { dataSources }) => {
-          // Implement logic to fetch qualifications from the database
           const qualifications = await fetchQualifications();
           return qualifications;
         },
         
         colleges: async (_, __, { dataSources }) => {
-          // Implement logic to fetch colleges from the database
           const colleges = await fetchColleges();
           return colleges;
         },
 
         streams: async (_, __, { dataSources }) => {
-          // Implement logic to fetch streams from the database
           const [result, metadata] = await sequelize.query(`SELECT * from stream_branch;`);
           return result;
         }
@@ -215,28 +185,23 @@ await sequelize.transaction(async (t) => {
       },
       Job: {
         instructionsAndRequirements: async (job, _, { dataSources }) => {
-          // Implement logic to fetch instructions and requirements for a job
           const instructionsAndRequirements = await fetchInstructionsAndRequirements(job.instructionsAndRequirementsId);
           return instructionsAndRequirements;
         },
         thingsToRemember: async (job, _, { dataSources }) => {
-          // Implement logic to fetch things to remember for a job
           const thingsToRemember = await fetchThingsToRemember(job.thingsToRememberId);
           return thingsToRemember;
         },
         slots: async (job, _, { dataSources }) => {
-          // Implement logic to fetch slots for a job
           const slots = await fetchSlotsForJob(job.job_id);
           return slots;
         },
         roles: async (job, _, { dataSources }) => {
-          // Implement logic to fetch roles for a job
           const roles = await fetchRolesForJob(job.job_id);
           return roles;
         },
 
         location_city: async (job, _, { dataSources }) => {
-          // Implement logic to fetch location city for a job
           const location_city = await fetchCity(job.location_id);
           return location_city;
         }

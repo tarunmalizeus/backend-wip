@@ -135,13 +135,14 @@ type UserDetails {
 
 
 type InstructionsAndRequirements {
-    instructionsAndRequirementsId: Int!
-    generalInstructions: String!
-    instructionsForTheExam: String!
-    minSystemRequirements: String!
-    processText: String!
-    created: String!
-    modified: String!
+  instructions_and_requirements_id: Int!
+  general_instructions: String!
+  instructions_for_the_exam: String!
+  min_system_requirements: String!
+  process_text: String!
+  created: String!
+  modified: String!
+  
   }
 
   type ThingsToRemember {
@@ -169,7 +170,7 @@ type InstructionsAndRequirements {
 
     instructionsAndRequirements: InstructionsAndRequirements!
     thingsToRemember: ThingsToRemember!
-    
+
     slots: [Slot!]!
     roles: [Role!]!
   }

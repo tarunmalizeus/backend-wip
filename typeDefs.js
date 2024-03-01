@@ -216,7 +216,7 @@ type InstructionsAndRequirements {
     user_id: Int!
     job_id: Int!
     preference: [String!]!
-    slot_id: Int!
+    slot: String!
     resumeFile: Upload
     created: String
     modified: String

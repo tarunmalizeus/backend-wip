@@ -67,8 +67,6 @@ async function executeExperiencedTechQuery(user_id, arg){
 export const resolvers = {
 
   Mutation:{
-
-
     login: async (_, { email, password }) => {
       const [result, metadata] = await sequelize.query(`SELECT * from users where email = "${email}" and password = "${password}";`);
       if(result.length === 0){
@@ -78,29 +76,34 @@ export const resolvers = {
     },
 
     createApplication : async (_, { input }) => {
-        const { job_id, preference, user_id, slot_id, resumeFile}=input;
+        const { job_id, preference, user_id, slot, resumeFile}=input;
         const [result, metadata] = await sequelize.query(`SELECT * from application where user_id = ${user_id} and job_id = ${job_id}`);
         if(result.length === 0){
-          let resume_id, application_id;
+          let resume_id, application_id, slot_id;
           await sequelize.transaction(async (t) => {
             [resume_id]=await sequelize.query(
-              `INSERT INTO resume (resume)
+              `INSERT INTO resume_for_job (resume)
               VALUES ("${resumeFile}")`
               , { transaction: t });
 
+              [slot_id] = await sequelize.query(
+                `SELECT slot_id FROM slots WHERE TIME(from_time) = TIME(:slotFromTime) AND TIME(to_time) = TIME(:slotToTime)`,
+                { replacements: { slotFromTime: slot.split('-')[0], slotToTime: slot.split('-')[1] }, transaction: t }
+            );
+                 
             [application_id]=await sequelize.query(
               `INSERT INTO application (user_id, job_id, slot_id, resume_id)
-              VALUES (${user_id}, ${job_id}, ${slot_id}, ${resume_id})`
+              VALUES (${user_id}, ${job_id}, ${slot_id[0].slot_id}, ${resume_id})`
               , { transaction: t });
 
             for(const role of preference){
-              //find the role_id from roles table then inseeert into application_role table
-
-              // await sequelize.query(
-              //   `INSERT INTO application_role (application_id, role_id)
-              //   VALUES ("${application_id}", "${role}")`
-              //   , { transaction: t });
+              const [result, metadata] = await sequelize.query(`SELECT role_id from roles where role_name = "${role}"`);
+              await sequelize.query(
+                `INSERT INTO application_role (application_id, role_id)
+                VALUES (${application_id}, ${result[0].role_id})`
+                , { transaction: t });
             }
+
           });
             return {
               application_id: application_id,

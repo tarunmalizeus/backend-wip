@@ -11,7 +11,6 @@ type ApplicationData {
   modified: String
 }
 
-
 type UserLogin {
   user_id: Int!
   email: String!

@@ -79,14 +79,27 @@ export const resolvers = {
         const { job_id, role_id, user_id, slot_id, resumeFile}=input;
         const [result, metadata] = await sequelize.query(`SELECT * from applications where user_id = ${user_id} and job_id = ${job_id} and role_id = ${role_id}`);
         if(result.length === 0){
-          await sequelize.query(
 
+          let resume_id, application_id;
+          await sequelize.transaction(async (t) => {
+            [resume_id]=await sequelize.query(
+              `INSERT INTO resume (resume)
+              VALUES ("${resumeFile}")`
+              , { transaction: t });
 
+            [application_id]=await sequelize.query(
+              `INSERT INTO applications (user_id, job_id, slot_id, resume_id)
+              VALUES ("${user_id}", "${job_id}", "${slot_id}", "${resume_id}")`
+              , { transaction: t });
 
+            for(const role of role_id){
+              await sequelize.query(
+                `INSERT INTO application_roles (application_id, role_id)
+                VALUES ("${application_id}", "${role}")`
+                , { transaction: t });
+            }
+          });
 
-            `INSERT INTO applications (user_id, job_id, role_id, slot_id, resume)
-            VALUES ("${user_id}", "${job_id}", "${role_id}", "${slot_id}", "${resumeFile}")`
-          );
         }
 
       }

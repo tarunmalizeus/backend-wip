@@ -1,7 +1,11 @@
 import {sequelize} from './database.js';
-
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { createError } from 'apollo-errors';
+
+export const FooError = createError('FooError', {
+  message: 'A foo error has occurred'
+});
 
 
 const fetchColleges = async () => {
@@ -74,8 +78,6 @@ export const resolvers = {
     },
 
     application : async (_, { input }) => {
-      const array = [];
-      try {
         const { job_id, role_id, user_id, slot_id, resumeFile}=input;
         const [result, metadata] = await sequelize.query(`SELECT * from application where user_id = ${user_id} and job_id = ${job_id}`);
         if(result.length === 0){
@@ -98,12 +100,20 @@ export const resolvers = {
                 , { transaction: t });
             }
           });
-
+            return {
+              application_id: application_id,
+            };
         }
-
-      }
-      catch (error) {
-      }
+        else{
+          throw new FooError({
+            data: {
+              something: 'important'
+            },
+            internalData: {
+              error: `The SQL server died.`
+            }
+          });
+        }
     },
 
     createUser: async (_, { input }) => {

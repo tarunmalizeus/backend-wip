@@ -1,10 +1,10 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import { typeDefs } from './schema/typeDefs.js';
+import { typeDefs } from './typeDefs.js';
 import { resolvers } from './resolvers.js';
 import { config } from 'dotenv';
 config({ path: './config.env' });
-import {sequelize} from './database.js';
+
 
 // The ApolloServer constructor requires two parameters: your schema
 // definition and your set of resolvers.

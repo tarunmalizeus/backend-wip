@@ -209,13 +209,13 @@ type InstructionsAndRequirements {
   type Mutation {
     createUser(input: CreateUserInput!): User
     login(email: String!, password: String!): AuthData!
-    application(input: application!): ApplicationData
+    createApplication(input: application!): ApplicationData
   }
 
   input application{
     user_id: Int!
     job_id: Int!
-    role_id: [Int!]!
+    preference: [String!]!
     slot_id: Int!
     resumeFile: Upload
     created: String

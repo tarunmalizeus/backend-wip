@@ -77,8 +77,8 @@ export const resolvers = {
       return result[0];
     },
 
-    application : async (_, { input }) => {
-        const { job_id, role_id, user_id, slot_id, resumeFile}=input;
+    createApplication : async (_, { input }) => {
+        const { job_id, preference, user_id, slot_id, resumeFile}=input;
         const [result, metadata] = await sequelize.query(`SELECT * from application where user_id = ${user_id} and job_id = ${job_id}`);
         if(result.length === 0){
           let resume_id, application_id;
@@ -93,11 +93,13 @@ export const resolvers = {
               VALUES (${user_id}, ${job_id}, ${slot_id}, ${resume_id})`
               , { transaction: t });
 
-            for(const role of role_id){
-              await sequelize.query(
-                `INSERT INTO application_role (application_id, role_id)
-                VALUES ("${application_id}", "${role}")`
-                , { transaction: t });
+            for(const role of preference){
+              //find the role_id from roles table then inseeert into application_role table
+
+              // await sequelize.query(
+              //   `INSERT INTO application_role (application_id, role_id)
+              //   VALUES ("${application_id}", "${role}")`
+              //   , { transaction: t });
             }
           });
             return {

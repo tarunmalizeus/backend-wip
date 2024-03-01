@@ -76,6 +76,7 @@ export const resolvers = {
     },
 
     createApplication : async (_, { input }) => {
+      console.log(input);
         const { job_id, preference, user_id, slot, resumeFile}=input;
         const [result, metadata] = await sequelize.query(`SELECT * from application where user_id = ${user_id} and job_id = ${job_id}`);
         if(result.length === 0){
@@ -111,7 +112,6 @@ export const resolvers = {
         }
         else{
           throw new ApplicationAlreadyExist();
-
           // https://www.npmjs.com/package/apollo-errors
           //unsucessfull
           // throw new ApplicationAlreadyExist({

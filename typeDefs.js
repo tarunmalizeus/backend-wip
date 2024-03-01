@@ -208,11 +208,11 @@ type InstructionsAndRequirements {
   
   type Mutation {
     createUser(input: CreateUserInput!): User
+    createApplication(input: CreateApplicationInput!): ApplicationData
     login(email: String!, password: String!): AuthData!
-    createApplication(input: application!): ApplicationData
   }
 
-  input application{
+  input CreateApplicationInput{
     user_id: Int!
     job_id: Int!
     preference: [String!]!

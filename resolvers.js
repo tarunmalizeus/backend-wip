@@ -3,8 +3,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { createError } from 'apollo-errors';
 
-export const FooError = createError('FooError', {
-  message: 'A foo error has occurred'
+export const ApplicationAlreadyExist = createError('ApplicationAlreadyExist', {
+  message: 'You have already applied for this job.'
 });
 
 
@@ -105,14 +105,18 @@ export const resolvers = {
             };
         }
         else{
-          throw new FooError({
-            data: {
-              something: 'important'
-            },
-            internalData: {
-              error: `The SQL server died.`
-            }
-          });
+          throw new ApplicationAlreadyExist();
+
+          // https://www.npmjs.com/package/apollo-errors
+          //unsucessfull
+          // throw new ApplicationAlreadyExist({
+          //   data: {
+          //     something: 'important'
+          //   },
+          //   internalData: {
+          //     error: `The SQL server died.`
+          //   }
+          // });
         }
     },
 

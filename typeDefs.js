@@ -7,6 +7,9 @@ scalar Upload
 type ApplicationData {
   application_id: Int!
   venu_id: Int!
+  job_id: Int!
+  slot_id: Int!
+  exact_date: String!
   created: String
   modified: String
 }

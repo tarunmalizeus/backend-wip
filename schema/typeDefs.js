@@ -3,6 +3,24 @@ export const typeDefs = `#graphql
 
 scalar Upload
 
+type ApplicationInput {
+  user_id: Int!
+  job_id: Int!
+  role_id: [Int!]!
+  slot_id: Int!
+  resumeFile: Upload
+  created: String
+  modified: String
+}
+
+type ApplicationData {
+  application_id: Int!
+  venu_id: Int!
+  created: String
+  modified: String
+}
+
+
 type UserLogin {
   user_id: Int!
   email: String!
@@ -201,6 +219,7 @@ type InstructionsAndRequirements {
   type Mutation {
     createUser(input: CreateUserInput!): User
     login(email: String!, password: String!): AuthData!
+    application(input: ApplicationInput!): ApplicationData
   }
   
   input CreateUserInput {

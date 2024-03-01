@@ -73,9 +73,26 @@ export const resolvers = {
       return result[0];
     },
 
+    application : async (_, { input }) => {
+      const array = [];
+      try {
+        const { job_id, role_id, user_id, slot_id, resumeFile}=input;
+        const [result, metadata] = await sequelize.query(`SELECT * from applications where user_id = ${user_id} and job_id = ${job_id} and role_id = ${role_id}`);
+        if(result.length === 0){
+          await sequelize.query(
 
 
 
+
+            `INSERT INTO applications (user_id, job_id, role_id, slot_id, resume)
+            VALUES ("${user_id}", "${job_id}", "${role_id}", "${slot_id}", "${resumeFile}")`
+          );
+        }
+
+      }
+      catch (error) {
+      }
+    },
 
     createUser: async (_, { input }) => {
       const array = [];

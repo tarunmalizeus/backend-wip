@@ -14,15 +14,10 @@ type ApplicationData {
   modified: String
 }
 
-type UserLogin {
-  user_id: Int!
-  email: String!
-  password: String!
-}
-
 
 type AuthData {
   user_id: Int!
+  name: String
   token: String
   tokenExpiration: Int
 }

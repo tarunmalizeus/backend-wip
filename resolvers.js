@@ -67,13 +67,6 @@ async function executeExperiencedTechQuery(user_id, arg){
 export const resolvers = {
 
   Mutation:{
-    login: async (_, { email, password }) => {
-      const [result, metadata] = await sequelize.query(`SELECT * from users where email = "${email}" and password = "${password}";`);
-      if(result.length === 0){
-        return null;
-      }
-      return result[0];
-    },
 
     createApplication : async (_, { input }) => {
         const { job_id, preference, user_id, slot, resumeFile}=input;
@@ -193,8 +186,8 @@ await sequelize.transaction(async (t) => {
 
   await sequelize.query(
    `
-    INSERT INTO userdetails (first_name, last_name, phone_no, portfolio_url, referal_emp_name, send_me_update, familiartechs_others, experttechs_others, user_id, userassets_id, edqualification_id, proqualification_id)
-    VALUES ("${firstName}", "${lastName}", "${phone}", "${portfolioUrl}", "${referralName}", ${jobUpdates === 'Yes' ? true : false}, "${otherFamiliarTech}", "${otherExperiencedTech}", "${user_id}", "${userassets_id}", "${edqualification_id}", "${proqualification_id}" )
+    INSERT INTO userdetails (userdetails_id,first_name, last_name, phone_no, portfolio_url, referal_emp_name, send_me_update, familiartechs_others, experttechs_others, user_id, userassets_id, edqualification_id, proqualification_id)
+    VALUES (${user_id},"${firstName}", "${lastName}", "${phone}", "${portfolioUrl}", "${referralName}", ${jobUpdates === 'Yes' ? true : false}, "${otherFamiliarTech}", "${otherExperiencedTech}", "${user_id}", "${userassets_id}", "${edqualification_id}", "${proqualification_id}" )
   `
     , { transaction: t });
 
@@ -212,6 +205,28 @@ await sequelize.transaction(async (t) => {
 
       catch (error) {
       }
+    },
+
+    login: async (_, { email, password }) => {
+      const [result, metadata] = await sequelize.query(`SELECT * from users where email = "${email}" and password = "${password}";`);
+      if(result.length === 0){
+        return null;
+      }
+      return result[0];
+    },
+  },
+  AuthData:{
+    name: async (parent, args, context, info) => {
+      const [result, metadata] = await sequelize.query(`SELECT first_name from userdetails where userdetail_id = ${parent.user_id};`);
+      return result[0].first_name;
+    },
+    token: async (parent, args, context, info) => {
+      return jwt.sign({ userId: parent.user_id, email: parent.email }, 'somesupersecretkey', {
+        expiresIn: '1h'
+      });
+    },
+    tokenExpiration: async (parent, args, context, info) => {
+      return 1;
     }
   },
 

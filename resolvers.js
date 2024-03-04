@@ -252,8 +252,10 @@ export const resolvers = {
           const jobs = await fetchJobs();
           return jobs;
         },
-        jobById: async (_, { job_id }, { dataSources }) => {
+        jobById: async (_, { job_id },  dataSources ) => {
           const job = await fetchJobById(job_id);
+          console.log(dataSources);
+          // return {user_id: context, ...job};
           return job;
         },
 

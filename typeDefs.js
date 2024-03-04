@@ -166,15 +166,16 @@ type InstructionsAndRequirements {
   }
 
   type Job {
-    job_id: Int!
-    name: String!
-    from_time: String!
-    to_time: String!
-    location_city: LocationCity!
-    internship: String!
+    user_id: String
+    job_id: Int
+    name: String
+    from_time: String
+    to_time: String
+    location_city: LocationCity
+    internship: String
 
-    instructionsAndRequirements: InstructionsAndRequirements!
-    thingsToRemember: ThingsToRemember!
+    instructionsAndRequirements: InstructionsAndRequirements
+    thingsToRemember: ThingsToRemember
 
     slots: [Slot!]!
     roles: [Role!]!

@@ -34,6 +34,7 @@ const createContext = ({ req }) => {
     
     // Verify the token
     const decodedToken = verifyToken(token);
+    // console.log('token', decodedToken);
 
     // Return the decoded token along with other necessary data
     return {

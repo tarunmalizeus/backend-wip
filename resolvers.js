@@ -7,6 +7,14 @@ export const ApplicationAlreadyExist = createError('ApplicationAlreadyExist', {
   message: 'You have already applied for this job.'
 });
 
+export const EmailOrPasswordIncorrect = createError('EmailOrPasswordIncorrect', {
+  message: 'Email or Password is incorrect.'
+});
+
+export const UserAlreadyExist = createError('UserAlreadyExist', {
+  message: 'User already exist.'
+});
+
 
 const fetchColleges = async () => {
     const [result, metadata] = await sequelize.query(`SELECT * from college;`);
@@ -161,7 +169,10 @@ const proQualificationQuery = `
 
 
 await sequelize.transaction(async (t) => {
-
+  const[users, metadata]=await sequelize.query(`SELECT * from users where email = "${email}"`);
+  if(users.length !== 0){
+    throw new UserAlreadyExist();
+  }
   [user_id]=await sequelize.query(userQuery, { transaction: t });
   [userassets_id]=await sequelize.query(userAssetsQuery, { transaction: t });
   [edqualification_id]=await sequelize.query(edQualificationQuery, { transaction: t });
@@ -210,7 +221,8 @@ await sequelize.transaction(async (t) => {
     login: async (_, { email, password }) => {
       const [result, metadata] = await sequelize.query(`SELECT * from users where email = "${email}" and password = "${password}";`);
       if(result.length === 0){
-        return null;
+        throw new EmailOrPasswordIncorrect();
+        return;
       }
       return result[0];
     },

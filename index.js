@@ -4,6 +4,7 @@ import { typeDefs } from './typeDefs.js';
 import { resolvers } from './resolvers.js';
 import { config } from 'dotenv';
 config({ path: './config.env' });
+import createContext from './context.js'; 
 
 
 // The ApolloServer constructor requires two parameters: your schema
@@ -11,6 +12,7 @@ config({ path: './config.env' });
 const server = new ApolloServer({
     typeDefs,
     resolvers,
+    context: createContext,
   });
   
   // Passing an ApolloServer instance to the `startStandaloneServer` function:

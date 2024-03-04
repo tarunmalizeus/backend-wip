@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { createError } from 'apollo-errors';
 import { config } from 'dotenv';
 config({ path: './config.env' });
+import { AuthenticationError } from 'apollo-server-errors';
 
 
 export const ApplicationAlreadyExist = createError('ApplicationAlreadyExist', {
@@ -79,7 +80,7 @@ export const resolvers = {
 
   Mutation:{
 
-    createApplication : async (_, { input }) => {
+    createApplication : async (_, { input }, context) => {
         const { job_id, preference, user_id, slot, resumeFile}=input;
         const [result, metadata] = await sequelize.query(`SELECT * from application where user_id = ${user_id} and job_id = ${job_id}`);
         if(result.length === 0){
@@ -246,7 +247,8 @@ export const resolvers = {
           return result[0];
         },
 
-        jobs: async (_, __, { dataSources }) => {
+        jobs: async (_, __, { dataSources }, context) => {
+          // console.log(context);
           const jobs = await fetchJobs();
           return jobs;
         },

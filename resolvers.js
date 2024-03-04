@@ -131,9 +131,10 @@ export const resolvers = {
         }
     },
 
+
+    
+
     createUser: async (_, { input }) => {
-      const array = [];
-      try {
         const { firstName, lastName, email, password, phone, portfolioUrl, imageFile, resumeFile, 
           instructionalDesigner, softwareEngineer, softwareQualityEngineer, 
           jobUpdates, referralName, 
@@ -144,78 +145,74 @@ export const resolvers = {
           
           let user_id,userassets_id,edqualification_id,proqualification_id;
 
+          const userQuery = `
+            INSERT INTO users (email, password)
+            VALUES ("${email}", "${password}")
+          `;
 
-const userQuery = `
-  INSERT INTO users (email, password)
-  VALUES ("${email}", "${password}")
-`;
-
-const userAssetsQuery = `
-  INSERT INTO userassets (resume, profile_photo)
-  VALUES ("${resumeFile}", "${imageFile}")
-`;
-
-
-const edQualificationQuery = `
-  INSERT INTO edqualification (percentage, passing_year, qualification_id, stream_id, college_id, other_college_name)
-  VALUES (${percentage}, ${yearOfPassing}, (SELECT qualification_id FROM qualification WHERE qualification_name = "${qualification}"), (SELECT stream_id FROM stream_branch WHERE stream_name = "${stream}"), (SELECT college_id FROM college WHERE college_name = "${college}"), "${otherCollege}")
-`;
+          const userAssetsQuery = `
+            INSERT INTO userassets (resume, profile_photo)
+            VALUES ("${resumeFile}", "${imageFile}")
+          `;
 
 
-const proQualificationQuery = `
-  INSERT INTO proqualification (applicationtype_id, exp_year, current_ctc, expected_ctc, currently_on_notice_period, notice_end, notice_period_length, appeared_zeus_test, zeus_test_role)
-  VALUES ((SELECT applicationtype_id FROM applicationtype WHERE applicationtype_name = "${applicantType}"), ${yearsOfExperience}, ${currentCTC}, ${expectedCTC}, ${onNoticePeriod === 'Yes' ? true : false}, ${noticePeriodEnd ? `"${noticePeriodEnd}"` : null}, ${noticePeriodLength}, ${appearedForTests === 'Yes' ? true : false}, "${testNames}")
-`;
+          const edQualificationQuery = `
+            INSERT INTO edqualification (percentage, passing_year, qualification_id, stream_id, college_id, other_college_name)
+            VALUES (${percentage}, ${yearOfPassing}, (SELECT qualification_id FROM qualification WHERE qualification_name = "${qualification}"), (SELECT stream_id FROM stream_branch WHERE stream_name = "${stream}"), (SELECT college_id FROM college WHERE college_name = "${college}"), "${otherCollege}")
+          `;
 
 
-await sequelize.transaction(async (t) => {
-  const[users, metadata]=await sequelize.query(`SELECT * from users where email = "${email}"`);
-  if(users.length !== 0){
-    throw new UserAlreadyExist();
-  }
-  [user_id]=await sequelize.query(userQuery, { transaction: t });
-  [userassets_id]=await sequelize.query(userAssetsQuery, { transaction: t });
-  [edqualification_id]=await sequelize.query(edQualificationQuery, { transaction: t });
-  [proqualification_id]=await sequelize.query(proQualificationQuery, { transaction: t });
+          const proQualificationQuery = `
+            INSERT INTO proqualification (applicationtype_id, exp_year, current_ctc, expected_ctc, currently_on_notice_period, notice_end, notice_period_length, appeared_zeus_test, zeus_test_role)
+            VALUES ((SELECT applicationtype_id FROM applicationtype WHERE applicationtype_name = "${applicantType}"), ${yearsOfExperience}, ${currentCTC}, ${expectedCTC}, ${onNoticePeriod === 'Yes' ? true : false}, ${noticePeriodEnd ? `"${noticePeriodEnd}"` : null}, ${noticePeriodLength}, ${appearedForTests === 'Yes' ? true : false}, "${testNames}")
+          `;
 
+          const[users, metadata]=await sequelize.query(`SELECT * from users where email = "${email}"`);
+          if(users.length === 0){
+            await sequelize.transaction(async (t) => {
+              [user_id]=await sequelize.query(userQuery, { transaction: t });
+              [userassets_id]=await sequelize.query(userAssetsQuery, { transaction: t });
+              [edqualification_id]=await sequelize.query(edQualificationQuery, { transaction: t });
+              [proqualification_id]=await sequelize.query(proQualificationQuery, { transaction: t });
+      
+  
+          for(const tech of experiencedTech){
+            const [result, metadata] = await sequelize.query(`SELECT tech_id from techs where tech_name = "${tech}"`);
+            await sequelize.query(
+              `INSERT INTO experienced_tech (user_id, tech_id)
+              VALUES ("${user_id}", ${result[0].tech_id})`
+              , { transaction: t });
+          }
+  
+          for(const tech of familiarTech){
+            const [result, metadata] = await sequelize.query(`SELECT tech_id from techs where tech_name = "${tech}"`);
+            await sequelize.query(
+              `INSERT INTO familiar_tech (user_id, tech_id)
+              VALUES ("${user_id}", ${result[0].tech_id})`
+              , { transaction: t });
+          }
+    
+        await sequelize.query(`INSERT INTO userdetails (first_name, last_name, phone_no, portfolio_url, referal_emp_name, send_me_update, familiartechs_others, experttechs_others, user_id, userassets_id, edqualification_id, proqualification_id)
+                            VALUES ("${firstName}", "${lastName}", "${phone}", "${portfolioUrl}", "${referralName}", ${jobUpdates === 'Yes' ? true : false}, "${otherFamiliarTech}", "${otherExperiencedTech}", "${user_id}", "${userassets_id}", "${edqualification_id}", "${proqualification_id}" )`
+                            , { transaction: t });
+            }
+            );
+    
+            return {
+              user_id: user_id,
+              firstName,
+              lastName,
+              email,
+              password,
+              phone,
+              portfolioUrl,
+            };
 
-  for(const tech of experiencedTech){
-    const [result, metadata] = await sequelize.query(`SELECT tech_id from techs where tech_name = "${tech}"`);
-    await sequelize.query(
-      `INSERT INTO experienced_tech (user_id, tech_id)
-      VALUES ("${user_id}", ${result[0].tech_id})`
-      , { transaction: t });
-  }
+        }
+        else{
+          throw new UserAlreadyExist();
+        }
 
-  for(const tech of familiarTech){
-    const [result, metadata] = await sequelize.query(`SELECT tech_id from techs where tech_name = "${tech}"`);
-    await sequelize.query(
-      `INSERT INTO familiar_tech (user_id, tech_id)
-      VALUES ("${user_id}", ${result[0].tech_id})`
-      , { transaction: t });
-  }
-
-  await sequelize.query(
-   `
-    INSERT INTO userdetails (first_name, last_name, phone_no, portfolio_url, referal_emp_name, send_me_update, familiartechs_others, experttechs_others, user_id, userassets_id, edqualification_id, proqualification_id)
-    VALUES ("${firstName}", "${lastName}", "${phone}", "${portfolioUrl}", "${referralName}", ${jobUpdates === 'Yes' ? true : false}, "${otherFamiliarTech}", "${otherExperiencedTech}", "${user_id}", "${userassets_id}", "${edqualification_id}", "${proqualification_id}" )
-  `
-    , { transaction: t });
-
-});
-        return {
-          user_id: user_id,
-          firstName,
-          lastName,
-          email,
-          password,
-          phone,
-          portfolioUrl,
-        };
-      }
-
-      catch (error) {
-      }
     },
 
     login: async (_, { email, password }) => {

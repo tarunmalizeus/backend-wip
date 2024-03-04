@@ -221,11 +221,11 @@ type InstructionsAndRequirements {
   }
   
   input CreateUserInput {
-    firstName: String!
-    lastName: String!
-    email: String!
-    password: String!
-    phone: String!
+    firstName: String
+    lastName: String
+    email: String
+    password: String
+    phone: String
     portfolioUrl: String
     imageFile: Upload
     resumeFile: Upload

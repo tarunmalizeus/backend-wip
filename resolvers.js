@@ -2,6 +2,9 @@ import {sequelize} from './database.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { createError } from 'apollo-errors';
+import { config } from 'dotenv';
+config({ path: './config.env' });
+
 
 export const ApplicationAlreadyExist = createError('ApplicationAlreadyExist', {
   message: 'You have already applied for this job.'
@@ -230,12 +233,9 @@ export const resolvers = {
       return result[0].first_name;
     },
     token: async (parent, args, context, info) => {
-      return jwt.sign({ userId: parent.user_id, email: parent.email }, 'somesupersecretkey', {
+      return jwt.sign({ userId: parent.user_id, email: parent.email },  process.env.JWT_SECRET, {
         expiresIn: '1h'
       });
-    },
-    tokenExpiration: async (parent, args, context, info) => {
-      return 1;
     }
   },
 

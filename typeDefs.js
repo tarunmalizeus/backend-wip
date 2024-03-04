@@ -19,7 +19,6 @@ type AuthData {
   user_id: Int!
   name: String
   token: String
-  tokenExpiration: Int
 }
 
 

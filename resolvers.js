@@ -109,7 +109,7 @@ export const resolvers = {
             return {
               application_id: application_id,
               //hardcoded, discuss its logic
-              venu_id: 1,
+              venue_id: 1,
               exact_date: "2021-07-01",
               job_id:`${job_id}`,
               slot_id: `${slot_id[0].slot_id}`,

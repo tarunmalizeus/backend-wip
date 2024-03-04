@@ -21,7 +21,7 @@ const createContext = ({ req }) => {
   // Get the authorization header from the request
   const authorization = req.headers['authorization'];
 
-  console.log('authorization', authorization);
+//   console.log('authorization', authorization);
 
   // Check if the authorization header is present
   if (!authorization) {

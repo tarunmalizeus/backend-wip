@@ -247,14 +247,14 @@ export const resolvers = {
           return result[0];
         },
 
-        jobs: async (_, __, { dataSources }, context) => {
-          // console.log(context);
+        jobs: async (_, __, dataSources ) => {
+          console.log(dataSources);
           const jobs = await fetchJobs();
           return jobs;
         },
         jobById: async (_, { job_id },  dataSources ) => {
+          // console.log(dataSources);
           const job = await fetchJobById(job_id);
-          console.log(dataSources);
           // return {user_id: context, ...job};
           return job;
         },

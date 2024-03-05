@@ -7,16 +7,12 @@ config({ path: './config.env' });
 import { AuthenticationError } from 'apollo-server-errors';
 
 
-// Higher-order function to wrap resolver functions with authentication check
 const withAuthentication = (resolver) => (parent, args, context, info) => {
-  // Access the decoded token from the context
   const { user } = context;
-  console.log('user', user);
-  // Check if the user is authenticated
+  // console.log('user', user);
   if (!user) {
     throw new AuthenticationError('User not authenticated');
   }
-
   // Call the original resolver function with the provided arguments
   return resolver(parent, args, context, info);
 };
@@ -58,7 +54,6 @@ const fetchJobById = async (job_id) => {
 }
 
 
-
 const fetchSlotsForJob = async (job_id) => {
   const [result, metadata] = await sequelize.query(`
       SELECT slots.slot_id, slots.from_time, slots.to_time, slots.created, slots.modified
@@ -97,7 +92,7 @@ export const resolvers = {
 
   Mutation:{
 
-    createApplication : async (_, { input }, context) => {
+    createApplication : withAuthentication(async (_, { input }, context) => {
         const { job_id, preference, user_id, slot, resumeFile}=input;
         const [result, metadata] = await sequelize.query(`SELECT * from application where user_id = ${user_id} and job_id = ${job_id}`);
         if(result.length === 0){
@@ -150,7 +145,7 @@ export const resolvers = {
           // });
 
         }
-    },
+    }),
 
 
     
@@ -259,23 +254,23 @@ export const resolvers = {
 
     Query: {
 
-        roleUnique : async (_, {job_id, role_id}, { dataSources }) => {
+        roleUnique :withAuthentication( async (_, {job_id, role_id}, { dataSources }) => {
           const [result, metadata] = await sequelize.query(`SELECT * from role_desc where role_id=${role_id} and job_id=${job_id} ;`);
           return result[0];
-        },
+        }),
 
         jobs: withAuthentication(async (_, __, dataSources ) => {
           // console.log(dataSources);
           const jobs = await fetchJobs();
           return jobs;
         }),
-        
-        jobById: async (_, { job_id },  dataSources ) => {
+
+        jobById:withAuthentication( async (_, { job_id },  dataSources ) => {
           // console.log(dataSources);
           const job = await fetchJobById(job_id);
           // return {user_id: context, ...job};
           return job;
-        },
+        }),
 
 
         qualifications: async (_, __, { dataSources }) => {
@@ -295,14 +290,14 @@ export const resolvers = {
 
       },
       Job: {
-        instructionsAndRequirements: async (job, _, { dataSources }) => {
+        instructionsAndRequirements: withAuthentication(async (job, _, { dataSources }) => {
           const [result, metadata] = await sequelize.query(`SELECT * from instructions_and_requirements where instructions_and_requirements_id = ${job.instructions_and_requirements_id};`);
           return result[0];
-        },
-        thingsToRemember: async (job, _, { dataSources }) => {
+        }),
+        thingsToRemember: withAuthentication(async (job, _, { dataSources }) => {
           const [result, metadata] = await sequelize.query(`SELECT * from things_to_remember where things_to_remember_id = ${job.things_to_remember_id};`);
           return result[0];
-        },
+        }),
         slots: async (job, _, { dataSources }) => {
           const slots = await fetchSlotsForJob(job.job_id);
           return slots;

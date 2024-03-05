@@ -7,6 +7,23 @@ config({ path: './config.env' });
 import { AuthenticationError } from 'apollo-server-errors';
 
 
+// Higher-order function to wrap resolver functions with authentication check
+const withAuthentication = (resolver) => (parent, args, context, info) => {
+  // Access the decoded token from the context
+  const { user } = context;
+  console.log('user', user);
+  // Check if the user is authenticated
+  if (!user) {
+    throw new AuthenticationError('User not authenticated');
+  }
+
+  // Call the original resolver function with the provided arguments
+  return resolver(parent, args, context, info);
+};
+
+
+
+
 export const ApplicationAlreadyExist = createError('ApplicationAlreadyExist', {
   message: 'You have already applied for this job.'
 });
@@ -247,11 +264,12 @@ export const resolvers = {
           return result[0];
         },
 
-        jobs: async (_, __, dataSources ) => {
-          console.log(dataSources);
+        jobs: withAuthentication(async (_, __, dataSources ) => {
+          // console.log(dataSources);
           const jobs = await fetchJobs();
           return jobs;
-        },
+        }),
+        
         jobById: async (_, { job_id },  dataSources ) => {
           // console.log(dataSources);
           const job = await fetchJobById(job_id);

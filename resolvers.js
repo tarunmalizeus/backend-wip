@@ -158,12 +158,17 @@ export const resolvers = {
           applicantType, yearsOfExperience, currentCTC, expectedCTC,
           experiencedTech, familiarTech, otherExperiencedTech, otherFamiliarTech, 
           onNoticePeriod, noticePeriodEnd, noticePeriodLength, appearedForTests, testNames } = input;
+
+
+           const hashedPassword = await bcrypt.hash(password, 6); 
+
+           console.log(hashedPassword);
           
           let user_id,userassets_id,edqualification_id,proqualification_id;
 
           const userQuery = `
             INSERT INTO users (email, password)
-            VALUES ("${email}", "${password}")
+            VALUES ("${email}", "${hashedPassword}")
           `;
 
           const userAssetsQuery = `
@@ -232,12 +237,20 @@ export const resolvers = {
     },
 
     login: async (_, { email, password }) => {
-      const [result, metadata] = await sequelize.query(`SELECT * from users where email = "${email}" and password = "${password}";`);
+      const [result, metadata] = await sequelize.query(`SELECT * from users where email = "${email}";`);
       if(result.length === 0){
         throw new EmailOrPasswordIncorrect();
         return;
+      }{
+        const isPasswordEqual = await bcrypt.compare(password, result[0].password);
+        if(!isPasswordEqual){
+          throw new EmailOrPasswordIncorrect();
+        }
+        return {
+          user_id: result[0].user_id,
+          email: result[0].email,
+        };
       }
-      return result[0];
     },
   },
   AuthData:{
@@ -266,9 +279,7 @@ export const resolvers = {
         }),
 
         jobById:withAuthentication( async (_, { job_id },  dataSources ) => {
-          // console.log(dataSources);
           const job = await fetchJobById(job_id);
-          // return {user_id: context, ...job};
           return job;
         }),
 

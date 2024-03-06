@@ -162,7 +162,6 @@ export const resolvers = {
 
            const hashedPassword = await bcrypt.hash(password, 6); 
 
-           console.log(hashedPassword);
           
           let user_id,userassets_id,edqualification_id,proqualification_id;
 
